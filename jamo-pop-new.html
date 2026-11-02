@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#fff6fb">
+<title>Let's JAMO 2.0 🌸</title>
+<style>
+:root{--ink:#51415f;--muted:#9585a1;--pink:#ffd5e5;--lav:#e4dcff;--mint:#d5f7eb;--yellow:#fff0b8;--paper:#fff8fc;--line:#f0dfed;--accent:#df6e9f;--white:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:ui-rounded,"Arial Rounded MT Bold",system-ui,-apple-system,sans-serif}
+button,select{font:inherit}
+button{cursor:pointer;border:0;color:inherit}
+button:disabled{cursor:not-allowed;opacity:.65}
+button:focus-visible,select:focus-visible{outline:3px solid #b8a4ff;outline-offset:2px}
+.wrap{max-width:900px;margin:auto;padding:0 17px 40px}
+.hero{margin:0 -17px 20px;padding:25px 21px 28px;border-radius:0 0 32px 32px;background:linear-gradient(120deg,#f4c8e6,#dcd7ff 55%,#d0f5e8)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{font-size:clamp(25px,5vw,38px);font-weight:1000;letter-spacing:-1px}.brand span{color:#d6538b}
+.lang{border:0;border-radius:14px;padding:11px 12px;background:#ffffffdf;color:var(--ink);font-weight:800}
+.score-pill{background:#ffffffcc;border-radius:20px;padding:10px 13px;font-weight:900}
+h1{font-size:clamp(27px,5.4vw,39px);line-height:1.18;margin:26px 0 7px}
+.subtitle{margin:0;font-size:16px}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0 25px}
+.stat{background:white;border:2px solid var(--line);border-radius:19px;padding:12px 6px;text-align:center;font-size:20px;font-weight:900}
+.stat small{display:block;color:var(--muted);font-size:12px;font-weight:700;margin-top:2px}
+h2{font-size:23px;margin:22px 0 13px}
+.games{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.game{min-height:140px;text-align:left;padding:18px 15px;border-radius:23px;box-shadow:0 5px 0 #eadce8;transition:transform .12s}
+.game:active{transform:translateY(3px);box-shadow:0 2px 0 #eadce8}
+.game .emoji{font-size:31px;display:block;margin-bottom:9px}
+.game strong{display:block;font-size:18px;margin-bottom:4px}
+.game small{font-size:13px}
+.pink{background:var(--pink)}.lav{background:var(--lav)}.mint{background:var(--mint)}.yellow{background:var(--yellow)}
+.panel{background:white;border:2px solid var(--line);border-radius:25px;padding:18px;margin-top:18px}
+.hidden{display:none!important}
+.row{display:flex;align-items:center;justify-content:space-between;gap:9px;flex-wrap:wrap}
+.pill{border-radius:13px;background:#f5edf8;padding:8px 11px;font-size:13px;font-weight:850}
+.progress{height:9px;border-radius:99px;background:#f0e5f1;overflow:hidden;margin:13px 0}
+.progress>div{height:100%;width:0;background:linear-gradient(90deg,#f2a7c5,#aa9aeb);transition:width .2s}
+.prompt-label{text-align:center;color:var(--muted);font-weight:750;margin:18px 0 5px}
+.question{text-align:center;font-size:clamp(36px,10vw,58px);font-weight:1000;line-height:1.18;margin:10px 0 8px;overflow-wrap:anywhere}
+.pronounce{text-align:center;color:#9b8aa3;font-size:14px;min-height:22px}
+.answers{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:20px 0 10px}
+.answer{background:#faf6ff;border:2px solid #ece0f7;border-radius:16px;padding:14px 8px;min-height:58px;font-weight:800;font-size:16px;overflow-wrap:anywhere}
+.answer.good{background:#ddf7e9;border-color:#77d2a7}
+.answer.bad{background:#ffe2ea;border-color:#f09ab4}
+.feedback{text-align:center;font-weight:850;min-height:28px;margin:12px 0 4px}
+.explanation{text-align:center;color:var(--muted);font-size:13px;min-height:20px;margin:5px 0}
+.primary{background:var(--accent);color:#fff;border-radius:15px;padding:13px 18px;font-weight:900}
+.secondary{background:#f3edf9;color:var(--ink);border-radius:14px;padding:11px 14px;font-weight:800}
+.next{width:100%;margin-top:10px}
+.actions{display:flex;gap:9px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.actions button{flex:1;min-width:115px}
+.result{text-align:center}
+.result-emoji{font-size:58px}
+.result h2{margin:8px 0}
+.result p{line-height:1.55}
+.footer{text-align:center;color:#aa98b2;font-size:12px;padding:25px 5px}
+.toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);background:#51415f;color:white;padding:11px 17px;border-radius:14px;display:none;z-index:10;max-width:90%;text-align:center}
+@media(min-width:650px){.wrap{padding-top:0}.hero{padding:30px 30px 33px;margin-bottom:22px}.games{grid-template-columns:repeat(4,minmax(0,1fr))}.game{min-height:165px}.game strong{font-size:17px}}
+@media(max-width:370px){.games{gap:9px}.game{padding:15px 11px;min-height:130px}.game strong{font-size:16px}.stats{gap:6px}.stat{font-size:17px}.answers{gap:8px}.answer{font-size:14px;padding:11px 5px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero">
+ <div class="top">
+  <div class="brand">🎀 JAMO <span>POP!</span></div>
+  <div class="top">
+   <select id="language" class="lang" aria-label="Select language">
+    <option value="vi">🇻🇳 Tiếng Việt</option>
+    <option value="ko">🇰🇷 한국어</option>
+    <option value="en">🇺🇸 English</option>
+   </select>
+   <div class="score-pill">⭐ <b id="headerScore">0</b></div>
+  </div>
+ </div>
+ <h1 id="headline">한국어, 같이 놀자!</h1>
+ <p class="subtitle" id="subtitle">Chơi một chút, giỏi tiếng Hàn hơn mỗi ngày 🌷</p>
+</header>
+
+<div class="stats">
+ <div class="stat">⭐ <b id="score">0</b><small id="pointsLabel">Điểm</small></div>
+ <div class="stat">🔥 <b id="combo">0</b><small id="comboLabel">Combo</small></div>
+ <div class="stat">🏆 <b id="best">0</b><small id="bestLabel">Kỷ lục</small></div>
+</div>
+
+<section id="home">
+ <h2 id="chooseTitle">💖 Chọn trò chơi</h2>
+ <div class="games">
+  <button class="game pink" data-mode="vocab"><span class="emoji">🧁</span><strong id="vocabTitle">Quiz từ vựng</strong><small id="vocabDesc">Chọn nghĩa đúng</small></button>
+  <button class="game lav" data-mode="jamo"><span class="emoji">🔤</span><strong id="jamoTitle">POP Hangul</strong><small id="jamoDesc">Nhận diện chữ</small></button>
+  <button class="game mint" data-mode="talk"><span class="emoji">💌</span><strong id="talkTitle">Câu giao tiếp</strong><small id="talkDesc">Tiếng Hàn hằng ngày</small></button>
+  <button class="game yellow" data-mode="speed"><span class="emoji">⚡</span><strong id="speedTitle">Speed POP</strong><small id="speedDesc">Thử thách 60 giây</small></button>
+ </div>
+ <p class="footer" id="homeFooter">🌱 Tiến bộ mỗi ngày một chút!</p>
+</section>
+
+<section id="gamePanel" class="panel hidden">
+ <div class="row">
+  <button class="secondary" id="backButton">← Trang chủ</button>
+  <span class="pill" id="roundPill">Câu 1/10</span>
+  <span class="pill hidden" id="timerPill">⏱️ 60</span>
+ </div>
+ <div class="progress"><div id="progressBar"></div></div>
+ <div class="prompt-label" id="promptLabel">Từ này có nghĩa là gì?</div>
+ <div class="question" id="question">학교</div>
+ <div class="pronounce" id="pronunciation">hak-gyo</div>
+ <div class="answers" id="answers"></div>
+ <div class="feedback" id="feedback" aria-live="polite"></div>
+ <div class="explanation" id="explanation"></div>
+ <button class="primary next" id="nextButton" disabled>Tiếp theo →</button>
+ <div class="actions">
+  <button class="secondary" id="listenButton">🔊 Nghe phát âm</button>
+  <button class="secondary" id="skipButton">⏭ Bỏ qua</button>
+ </div>
+</section>
+
+<section id="resultPanel" class="panel result hidden">
+ <div class="result-emoji" id="resultEmoji">🏆</div>
+ <h2 id="resultTitle">Giỏi lắm!</h2>
+ <p id="resultText"></p>
+ <button class="primary" id="replayButton">Chơi lại ↻</button>
+ <button class="secondary" id="resultHomeButton">Trang chủ</button>
+</section>
+
+<p class="footer" id="footer">작은 한 걸음, 큰 성장 🌱 · Mỗi ngày tiến bộ một chút!</p>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+"use strict";
+
+const TEXT = {
+ vi:{
+  headline:"한국어, 같이 놀자!",subtitle:"Chơi một chút, giỏi tiếng Hàn hơn mỗi ngày 🌷",
+  points:"Điểm",combo:"Combo",best:"Kỷ lục",choose:"💖 Chọn trò chơi",
+  vocab:"Quiz từ vựng",vocabDesc:"Chọn nghĩa đúng",jamo:"POP Hangul",jamoDesc:"Nhận diện chữ",
+  talk:"Câu giao tiếp",talkDesc:"Tiếng Hàn hằng ngày",speed:"Speed POP",speedDesc:"Thử thách 60 giây",
+  homeHint:"🌱 Tiến bộ mỗi ngày một chút!",back:"← Trang chủ",next:"Tiếp theo →",finish:"Xem kết quả 🏆",
+  listen:"🔊 Nghe phát âm",skip:"⏭ Bỏ qua",choose:"Chọn đáp án đúng nhé!",
+  vocabPrompt:"Từ tiếng Hàn này có nghĩa là gì?",jamoPrompt:"Chọn cách đọc đúng của chữ này",
+  talkPrompt:"Câu tiếng Hàn này có nghĩa là gì?",speedPrompt:"Trả lời nhanh để ghi thêm điểm!",
+  correct:"🎉 Chính xác! +10 điểm",wrong:"💗 Chưa đúng rồi. Đáp án đúng là: ",
+  skipped:"Đáp án đúng: ",round:"Câu",of:"/",time:"Còn",timeUp:"Hết giờ rồi!",
+  great:"Giỏi lắm!",result:"Bạn đạt",pointsWord:"điểm",accuracy:"Độ chính xác",
+  perfect:"Quá xuất sắc! 🌟",nice:"Làm tốt lắm! 💗",practice:"Cố lên nhé, luyện thêm mỗi ngày nha!",
+  footer:"작은 한 걸음, 큰 성장 🌱 · Mỗi ngày tiến bộ một chút!",
+  explain:"Ghi nhớ: ",toast:"Hãy chọn một đáp án trước nhé."
+ },
+ ko:{
+  headline:"한국어, 같이 놀자!",subtitle:"매일 조금씩 연습하고 한국어 실력을 키워요 🌷",
+  points:"점수",combo:"연속 정답",best:"최고 점수",choose:"💖 게임 선택",
+  vocab:"단어 퀴즈",vocabDesc:"맞는 뜻 고르기",jamo:"한글 POP",jamoDesc:"한글 글자 알아보기",
+  talk:"일상 회화",talkDesc:"매일 쓰는 한국어",speed:"스피드 POP",speedDesc:"60초 도전",
+  homeHint:"🌱 매일 조금씩 성장해요!",back:"← 홈으로",next:"다음 문제 →",finish:"결과 보기 🏆",
+  listen:"🔊 발음 듣기",skip:"⏭ 건너뛰기",choose:"정답을 골라 보세요!",
+  vocabPrompt:"이 한국어 단어의 뜻은 무엇인가요?",jamoPrompt:"이 글자의 발음을 고르세요",
+  talkPrompt:"이 한국어 표현의 뜻은 무엇인가요?",speedPrompt:"빠르게 답하고 점수를 얻으세요!",
+  correct:"🎉 정답이에요! +10점",wrong:"💗 아쉬워요. 정답은: ",
+  skipped:"정답: ",round:"문제",of:"/",time:"남은 시간",timeUp:"시간이 끝났어요!",
+  great:"정말 잘했어요!",result:"획득 점수",pointsWord:"점",accuracy:"정답률",
+  perfect:"정말 훌륭해요! 🌟",nice:"잘했어요! 💗",practice:"괜찮아요. 매일 조금씩 연습해요!",
+  footer:"작은 한 걸음, 큰 성장 🌱",explain:"기억하세요: ",toast:"먼저 정답을 선택해 주세요."
+ },
+ en:{
+  headline:"Let's play Korean together!",subtitle:"A little practice every day makes your Korean bloom 🌷",
+  points:"Points",combo:"Streak",best:"Personal best",choose:"💖 Choose a game",
+  vocab:"Vocabulary Quiz",vocabDesc:"Choose the right meaning",jamo:"Hangul POP",jamoDesc:"Recognize Hangul letters",
+  talk:"Daily Conversation",talkDesc:"Useful everyday Korean",speed:"Speed POP",speedDesc:"A 60-second challenge",
+  homeHint:"🌱 A little progress every day!",back:"← Home",next:"Next question →",finish:"See results 🏆",
+  listen:"🔊 Hear pronunciation",skip:"⏭ Skip",choose:"Choose the correct answer!",
+  vocabPrompt:"What does this Korean word mean?",jamoPrompt:"Choose the correct sound for this letter",
+  talkPrompt:"What does this Korean phrase mean?",speedPrompt:"Answer quickly to earn more points!",
+  correct:"🎉 Correct! +10 points",wrong:"💗 Not quite. The correct answer is: ",
+  skipped:"Correct answer: ",round:"Question",of:"/",time:"Time left",timeUp:"Time's up!",
+  great:"Great job!",result:"You scored",pointsWord:"points",accuracy:"Accuracy",
+  perfect:"Amazing work! 🌟",nice:"Well done! 💗",practice:"Keep practicing a little every day!",
+  footer:"작은 한 걸음, 큰 성장 🌱 · Small steps, big growth!",
+  explain:"Remember: ",toast:"Please choose an answer first."
+ }
+};
+
+const Q = (type,prompt,roman,opts,correct,explain) => ({
+ type,prompt,roman,opts,correct,explain
+});
+const vocab = [
+ Q("vocab","사과","sa-gwa",[
+  ["Quả táo","사과","Apple"],["Quả lê","배","Pear"],["Quả cam","오렌지","Orange"],["Quả nho","포도","Grape"]],0,
+  ["사과 = quả táo.","사과는 apple이에요.","사과 means apple."]),
+ Q("vocab","학교","hak-gyo",[
+  ["Trường học","학교","School"],["Bệnh viện","병원","Hospital"],["Thư viện","도서관","Library"],["Nhà hàng","식당","Restaurant"]],0,
+  ["학교 = trường học.","학교는 school이에요.","학교 means school."]),
+ Q("vocab","친구","chin-gu",[
+  ["Bạn bè","친구","Friend"],["Gia đình","가족","Family"],["Giáo viên","선생님","Teacher"],["Học sinh","학생","Student"]],0,
+  ["친구 = bạn bè.","친구는 friend예요.","친구 means friend."]),
+ Q("vocab","물","mul",[
+  ["Nước","물","Water"],["Sữa","우유","Milk"],["Cà phê","커피","Coffee"],["Trà","차","Tea"]],0,
+  ["물 = nước.","물은 water예요.","물 means water."]),
+ Q("vocab","고양이","go-yang-i",[
+  ["Con mèo","고양이","Cat"],["Con chó","강아지","Dog"],["Con thỏ","토끼","Rabbit"],["Con chim","새","Bird"]],0,
+  ["고양이 = con mèo.","고양이는 cat이에요.","고양이 means cat."]),
+ Q("vocab","책","chaek",[
+  ["Sách","책","Book"],["Bút","펜","Pen"],["Bàn","책상","Desk"],["Cửa","문","Door"]],0,
+  ["책 = sách.","책은 book이에요.","책 means book."]),
+ Q("vocab","가족","ga-jok",[
+  ["Gia đình","가족","Family"],["Bạn bè","친구","Friends"],["Công việc","일","Work"],["Đồ ăn","음식","Food"]],0,
+  ["가족 = gia đình.","가족은 family예요.","가족 means family."]),
+ Q("vocab","아침","a-chim",[
+  ["Buổi sáng","아침","Morning"],["Buổi tối","저녁","Evening"],["Buổi trưa","점심","Noon"],["Ngày mai","내일","Tomorrow"]],0,
+  ["아침 = buổi sáng.","아침은 morning이에요.","아침 means morning."]),
+ Q("vocab","식당","sik-ttang",[
+  ["Nhà hàng","식당","Restaurant"],["Trường học","학교","School"],["Nhà ga","역","Station"],["Ngân hàng","은행","Bank"]],0,
+  ["식당 = nhà hàng.","식당은 restaurant예요.","식당 means restaurant."]),
+ Q("vocab","지하철","ji-ha-cheol",[
+  ["Tàu điện ngầm","지하철","Subway"],["Xe buýt","버스","Bus"],["Taxi","택시","Taxi"],["Máy bay","비행기","Airplane"]],0,
+  ["지하철 = tàu điện ngầm.","지하철은 subway예요.","지하철 means subway."]),
+ Q("vocab","배고파요","bae-go-pa-yo",[
+  ["Tôi đói bụng","배고파요","I'm hungry"],["Tôi khát nước","목말라요","I'm thirsty"],["Tôi buồn ngủ","졸려요","I'm sleepy"],["Tôi no rồi","배불러요","I'm full"]],0,
+  ["배고파요 = tôi đói bụng.","배고파요는 I'm hungry예요.","배고파요 means I'm hungry."]),
+ Q("vocab","비싸요","bi-ssa-yo",[
+  ["Đắt","비싸요","Expensive"],["Rẻ","싸요","Cheap"],["Đẹp","예뻐요","Pretty"],["Ngon","맛있어요","Delicious"]],0,
+  ["비싸요 = đắt.","비싸요는 expensive예요.","비싸요 means expensive."])
+];
+const jamo = [
+ Q("jamo","ㄱ","giyeok",[
+  ["Âm gần g/k","ㄱ 소리","Sound like g/k"],["Âm n","ㄴ 소리","Sound n"],["Âm m","ㅁ 소리","Sound m"],["Âm s","ㅅ 소리","Sound s"]],0,
+  ["ㄱ là phụ âm, thường gần âm g/k.","ㄱ은 자음이며 g/k와 비슷해요.","ㄱ is a consonant, similar to g/k."]),
+ Q("jamo","ㄴ","nieun",[
+  ["Âm n","ㄴ 소리","Sound n"],["Âm r/l","ㄹ 소리","Sound r/l"],["Âm b/p","ㅂ 소리","Sound b/p"],["Âm h","ㅎ 소리","Sound h"]],0,
+  ["ㄴ phát âm gần giống n.","ㄴ은 n 소리와 비슷해요.","ㄴ sounds like n."]),
+ Q("jamo","ㅁ","mieum",[
+  ["Âm m","ㅁ 소리","Sound m"],["Âm s","ㅅ 소리","Sound s"],["Âm j","ㅈ 소리","Sound j"],["Âm h","ㅎ 소리","Sound h"]],0,
+  ["ㅁ phát âm là m.","ㅁ은 m 소리예요.","ㅁ sounds like m."]),
+ Q("jamo","ㅅ","siot",[
+  ["Âm s","ㅅ 소리","Sound s"],["Âm n","ㄴ 소리","Sound n"],["Âm m","ㅁ 소리","Sound m"],["Âm g/k","ㄱ 소리","Sound g/k"]],0,
+  ["ㅅ thường phát âm gần giống s.","ㅅ은 보통 s 소리와 비슷해요.","ㅅ usually sounds like s."]),
+ Q("jamo","ㅇ","ieung",[
+  ["Âm câm đầu âm tiết / ng cuối âm tiết","초성은 소리 없음 / 받침은 ng","Silent at start / ng at end"],["Âm m","ㅁ 소리","Sound m"],["Âm h","ㅎ 소리","Sound h"],["Âm n","ㄴ 소리","Sound n"]],0,
+  ["ㅇ đứng đầu âm tiết thường không phát âm; ở cuối đọc ng.","ㅇ은 초성에서 소리가 없고 받침에서는 ng 소리예요.","ㅇ is silent at the start of a syllable and sounds ng at the end."]),
+ Q("jamo","ㅏ","a",[
+  ["Nguyên âm a","ㅏ 모음","Vowel a"],["Nguyên âm eo","ㅓ 모음","Vowel eo"],["Nguyên âm o","ㅗ 모음","Vowel o"],["Nguyên âm u","ㅜ 모음","Vowel u"]],0,
+  ["ㅏ đọc gần giống a.","ㅏ는 a 소리예요.","ㅏ sounds like a."]),
+ Q("jamo","ㅓ","eo",[
+  ["Nguyên âm eo","ㅓ 모음","Vowel eo"],["Nguyên âm a","ㅏ 모음","Vowel a"],["Nguyên âm i","ㅣ 모음","Vowel i"],["Nguyên âm eu","ㅡ 모음","Vowel eu"]],0,
+  ["ㅓ được phiên âm là eo.","ㅓ는 eo로 표기해요.","ㅓ is romanized as eo."]),
+ Q("jamo","ㅗ","o",[
+  ["Nguyên âm o","ㅗ 모음","Vowel o"],["Nguyên âm u","ㅜ 모음","Vowel u"],["Nguyên âm a","ㅏ 모음","Vowel a"],["Nguyên âm eu","ㅡ 모음","Vowel eu"]],0,
+  ["ㅗ đọc là o.","ㅗ는 o 소리예요.","ㅗ sounds like o."]),
+ Q("jamo","ㅜ","u",[
+  ["Nguyên âm u","ㅜ 모음","Vowel u"],["Nguyên âm o","ㅗ 모음","Vowel o"],["Nguyên âm eo","ㅓ 모음","Vowel eo"],["Nguyên âm i","ㅣ 모음","Vowel i"]],0,
+  ["ㅜ đọc là u.","ㅜ는 u 소리예요.","ㅜ sounds like u."]),
+ Q("jamo","가","ga",[
+  ["ga","가","ga"],["na","나","na"],["da","다","da"],["ma","마","ma"]],0,
+  ["ㄱ + ㅏ = 가 (ga).","ㄱ + ㅏ = 가예요.","ㄱ + ㅏ makes 가 (ga)."]),
+ Q("jamo","나","na",[
+  ["na","나","na"],["ga","가","ga"],["da","다","da"],["ra","라","ra"]],0,
+  ["ㄴ + ㅏ = 나 (na).","ㄴ + ㅏ = 나예요.","ㄴ + ㅏ makes 나 (na)."])
+];
+const talk = [
+ Q("talk","안녕하세요?","an-nyeong-ha-se-yo",[
+  ["Xin chào","안녕하세요","Hello"],["Cảm ơn","감사합니다","Thank you"],["Xin lỗi","죄송합니다","I'm sorry"],["Tạm biệt","안녕히 가세요","Goodbye"]],0,
+  ["Dùng để chào hỏi lịch sự.","정중하게 인사할 때 사용해요.","A polite greeting."]),
+ Q("talk","이거 얼마예요?","i-geo eol-ma-ye-yo",[
+  ["Cái này bao nhiêu tiền?","이거 얼마예요?","How much is this?"],["Cái này là gì?","이거 뭐예요?","What is this?"],["Ở đâu vậy?","어디예요?","Where is it?"],["Mấy giờ rồi?","몇 시예요?","What time is it?"]],0,
+  ["Dùng khi hỏi giá món đồ.","물건의 가격을 물을 때 사용해요.","Use this to ask the price of something."]),
+ Q("talk","화장실이 어디예요?","hwa-jang-sil-i eo-di-ye-yo",[
+  ["Nhà vệ sinh ở đâu?","화장실이 어디예요?","Where is the restroom?"],["Nhà hàng ở đâu?","식당이 어디예요?","Where is the restaurant?"],["Bao nhiêu tiền?","얼마예요?","How much is it?"],["Bạn tên gì?","이름이 뭐예요?","What's your name?"]],0,
+  ["어디예요? nghĩa là ở đâu?","어디예요?는 Where is it?이라는 뜻이에요.","어디예요? means 'Where is it?'"]),
+ Q("talk","물 주세요.","mul ju-se-yo",[
+  ["Cho tôi xin nước.","물 주세요.","Water, please."],["Cho tôi xin cà phê.","커피 주세요.","Coffee, please."],["Tôi no rồi.","배불러요.","I'm full."],["Cảm ơn.","감사합니다.","Thank you."]],0,
+  ["주세요 là cách nói lịch sự khi nhờ hoặc gọi món.","주세요는 정중하게 요청할 때 사용해요.","주세요 is a polite way to request something."]),
+ Q("talk","천천히 말씀해 주세요.","cheon-cheon-hi mal-hae ju-se-yo",[
+  ["Xin hãy nói chậm lại.","천천히 말씀해 주세요.","Please speak slowly."],["Xin hãy đợi một chút.","잠깐만 기다려 주세요.","Please wait a moment."],["Xin hãy nói to lên.","크게 말씀해 주세요.","Please speak louder."],["Xin hãy ngồi xuống.","앉아 주세요.","Please sit down."]],0,
+  ["Câu hữu ích khi bạn chưa nghe kịp tiếng Hàn.","한국어를 잘 못 알아들었을 때 유용한 표현이에요.","A useful phrase when you need someone to slow down."]),
+ Q("talk","주문할게요.","ju-mun-hal-kke-yo",[
+  ["Tôi muốn gọi món.","주문할게요.","I'd like to order."],["Tôi muốn thanh toán.","계산할게요.","I'd like to pay."],["Tôi muốn mang đi.","포장해 주세요.","To go, please."],["Tôi muốn xem thực đơn.","메뉴판 주세요.","Can I have the menu?"]],0,
+  ["Dùng ở nhà hàng khi muốn gọi món.","식당에서 주문할 때 사용해요.","Use this when ordering at a restaurant."]),
+ Q("talk","카드 돼요?","ka-deu dwae-yo",[
+  ["Có dùng thẻ được không?","카드 돼요?","Can I pay by card?"],["Có giảm giá không?","할인돼요?","Is there a discount?"],["Có chỗ ngồi không?","자리 있어요?","Is there a seat?"],["Có nước không?","물 있어요?","Do you have water?"]],0,
+  ["Câu hỏi thường dùng khi mua sắm hoặc thanh toán.","결제할 때 자주 쓰는 질문이에요.","A useful question when paying."]),
+ Q("talk","만나서 반가워요.","man-na-seo ban-ga-wo-yo",[
+  ["Rất vui được gặp bạn.","만나서 반가워요.","Nice to meet you."],["Tôi nhớ bạn.","보고 싶어요.","I miss you."],["Chúc mừng nhé.","축하해요.","Congratulations."],["Chúc ngủ ngon.","잘 자요.","Good night."]],0,
+  ["Dùng khi gặp ai đó lần đầu.","처음 만난 사람에게 사용해요.","Say this when meeting someone for the first time."])
+];
+
+const $ = id => document.getElementById(id);
+let lang="vi", currentMode="vocab", deck=[], index=0, score=0, combo=0, best=0, roundScore=0;
+let locked=false, timerId=null, timeLeft=60, currentQuestion=null, speedCount=0;
+
+function tr(key){return TEXT[lang][key] || TEXT.vi[key] || key}
+function shuffle(list){const a=[...list];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function safeNumber(value){const n=Number(value);return Number.isFinite(n)&&n>=0?n:0}
+function loadSaved(){
+ try{score=safeNumber(localStorage.getItem("jamo2_score"));best=safeNumber(localStorage.getItem("jamo2_best"))}catch(e){score=0;best=0}
+ updateStats();
+}
+function saveStats(){try{localStorage.setItem("jamo2_score",String(score));localStorage.setItem("jamo2_best",String(best))}catch(e){}}
+function updateStats(){$("score").textContent=score;$("headerScore").textContent=score;$("combo").textContent=combo;$("best").textContent=best}
+function applyLanguage(){
+ lang=$("language").value;
+ document.documentElement.lang=lang;
+ $("headline").textContent=tr("headline");$("subtitle").textContent=tr("subtitle");
+ $("pointsLabel").textContent=tr("points");$("comboLabel").textContent=tr("combo");$("bestLabel").textContent=tr("best");
+ $("chooseTitle").textContent=tr("choose");$("vocabTitle").textContent=tr("vocab");$("vocabDesc").textContent=tr("vocabDesc");
+ $("jamoTitle").textContent=tr("jamo");$("jamoDesc").textContent=tr("jamoDesc");$("talkTitle").textContent=tr("talk");$("talkDesc").textContent=tr("talkDesc");
+ $("speedTitle").textContent=tr("speed");$("speedDesc").textContent=tr("speedDesc");$("homeFooter").textContent=tr("homeHint");$("footer").textContent=tr("footer");
+ $("backButton").textContent=tr("back");$("listenButton").textContent=tr("listen");$("skipButton").textContent=tr("skip");
+ if(!$("gamePanel").classList.contains("hidden") && currentQuestion)renderCurrentQuestion();
+}
+function categoryData(mode){if(mode==="vocab")return vocab;if(mode==="jamo")return jamo;if(mode==="talk")return talk;return [...vocab,...jamo,...talk]}
+function startGame(mode){
+ clearInterval(timerId);currentMode=mode;index=0;combo=0;roundScore=0;speedCount=0;locked=false;timeLeft=60;
+ deck=shuffle(categoryData(mode));
+ $("home").classList.add("hidden");$("resultPanel").classList.add("hidden");$("gamePanel").classList.remove("hidden");
+ $("timerPill").classList.toggle("hidden",mode!=="speed");
+ if(mode==="speed"){updateTimerLabel();timerId=setInterval(()=>{timeLeft-=1;updateTimerLabel();if(timeLeft<=0)finishGame(true)},1000)}
+ renderCurrentQuestion();window.scrollTo({top:0,behavior:"smooth"});
+}
+function updateTimerLabel(){$("timerPill").textContent="⏱️ "+Math.max(0,timeLeft)+"s"}
+function modePrompt(){
+ if(currentMode==="vocab")return tr("vocabPrompt");
+ if(currentMode==="jamo")return tr("jamoPrompt");
+ if(currentMode==="talk")return tr("talkPrompt");
+ return tr("speedPrompt");
+}
+function renderCurrentQuestion(){
+ if(!deck.length){finishGame(false);return}
+ if(currentMode!=="speed" && index>=deck.length){finishGame(false);return}
+ currentQuestion=deck[index%deck.length];locked=false;
+ $("promptLabel").textContent=modePrompt();
+ $("question").textContent=currentQuestion.prompt;
+ $("pronunciation").textContent=currentQuestion.roman || "";
+ $("roundPill").textContent=tr("round")+" "+(index+1)+(currentMode==="speed"?"":" "+tr("of")+" "+deck.length);
+ $("progressBar").style.width=currentMode==="speed"?Math.min(100,(speedCount%10+1)*10)+"%":((index+1)/deck.length*100)+"%";
+ $("feedback").textContent="";$("explanation").textContent="";
+ $("nextButton").disabled=true;$("nextButton").textContent=(currentMode!=="speed"&&index===deck.length-1)?tr("finish"):tr("next");
+ const choices=shuffle(currentQuestion.opts.map((option,i)=>({option,index:i})));
+ $("answers").innerHTML="";
+ choices.forEach(({option,index:optionIndex})=>{
+  const button=document.createElement("button");button.type="button";button.className="answer";
+  button.textContent=option[["vi","ko","en"].indexOf(lang)];
+  button.addEventListener("click",()=>chooseAnswer(button,optionIndex));
+  $("answers").appendChild(button);
+ });
+}
+function chooseAnswer(button,chosenIndex){
+ if(locked || !currentQuestion)return;
+ locked=true;
+ const isCorrect=chosenIndex===currentQuestion.correct;
+ const buttons=[...$("answers").querySelectorAll("button")];
+ buttons.forEach((b)=>{
+  b.disabled=true;
+  const answerIndex=currentQuestion.opts.findIndex(opt=>opt[["vi","ko","en"].indexOf(lang)]===b.textContent);
+  if(answerIndex===currentQuestion.correct)b.classList.add("good");
+ });
+ if(isCorrect){
+  score+=10;roundScore+=10;combo+=1;speedCount+=1;
+  $("feedback").textContent=tr("correct");
+  button.classList.add("good");
+ }else{
+  combo=0;speedCount+=1;button.classList.add("bad");
+  const correct=currentQuestion.opts[currentQuestion.correct][["vi","ko","en"].indexOf(lang)];
+  $("feedback").textContent=tr("wrong")+correct;
+ }
+ if(score>best)best=score;
+ const explanation=currentQuestion.explain?.[["vi","ko","en"].indexOf(lang)] || "";
+ $("explanation").textContent=explanation?tr("explain")+explanation:"";
+ updateStats();saveStats();$("nextButton").disabled=false;
+}
+function skipQuestion(){
+ if(locked)return;
+ locked=true;combo=0;speedCount+=1;
+ const correct=currentQuestion.opts[currentQuestion.correct][["vi","ko","en"].indexOf(lang)];
+ $("feedback").textContent=tr("skipped")+correct;
+ [...$("answers").querySelectorAll("button")].forEach(b=>{
+  b.disabled=true;
+  if(b.textContent===correct)b.classList.add("good");
+ });
+ $("nextButton").disabled=false;updateStats();
+}
+function nextQuestion(){
+ if(!locked){showToast(tr("toast"));return}
+ index+=1;
+ if(currentMode!=="speed" && index>=deck.length){finishGame(false);return}
+ if(currentMode==="speed" && index>=deck.length){deck=shuffle(categoryData("speed"));index=0}
+ renderCurrentQuestion();
+}
+function finishGame(timeExpired){
+ clearInterval(timerId);timerId=null;
+ $("gamePanel").classList.add("hidden");$("resultPanel").classList.remove("hidden");
+ $("resultTitle").textContent=timeExpired?tr("timeUp"):tr("great");
+ $("resultEmoji").textContent=roundScore>=80?"🏆":roundScore>=40?"🌟":"🌸";
+ const attempted=currentMode==="speed"?speedCount:Math.min(index+1,deck.length);
+ const total=currentMode==="speed"?Math.max(1,attempted):deck.length;
+ const accuracy=attempted?Math.round((roundScore/10)/attempted*100):0;
+ $("resultText").textContent=tr("result")+" "+roundScore+" "+tr("pointsWord")+". "+tr("accuracy")+": "+accuracy+"%.";
+ $("replayButton").textContent=tr("again");$("resultHomeButton").textContent=tr("home");
+ window.scrollTo({top:0,behavior:"smooth"});
+}
+function goHome(){
+ clearInterval(timerId);timerId=null;
+ $("gamePanel").classList.add("hidden");$("resultPanel").classList.add("hidden");$("home").classList.remove("hidden");
+ updateStats();window.scrollTo({top:0,behavior:"smooth"});
+}
+function speakCurrent(){
+ if(!currentQuestion)return;
+ if(!("speechSynthesis" in window)){showToast("Speech audio is not available in this browser.");return}
+ window.speechSynthesis.cancel();
+ const speech=new SpeechSynthesisUtterance(currentQuestion.prompt);speech.lang="ko-KR";speech.rate=.82;
+ window.speechSynthesis.speak(speech);
+}
+function showToast(message){$("toast").textContent=message;$("toast").style.display="block";clearTimeout(showToast.timeout);showToast.timeout=setTimeout(()=>$("toast").style.display="none",2000)}
+
+document.querySelectorAll("[data-mode]").forEach(button=>button.addEventListener("click",()=>startGame(button.dataset.mode)));
+$("language").addEventListener("change",applyLanguage);
+$("backButton").addEventListener("click",goHome);
+$("nextButton").addEventListener("click",nextQuestion);
+$("skipButton").addEventListener("click",skipQuestion);
+$("listenButton").addEventListener("click",speakCurrent);
+$("replayButton").addEventListener("click",()=>startGame(currentMode));
+$("resultHomeButton").addEventListener("click",goHome);
+loadSaved();applyLanguage();
+</script>
+</body>
+</html>
